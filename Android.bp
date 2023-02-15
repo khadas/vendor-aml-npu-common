@@ -63,6 +63,23 @@ cc_prebuilt_library_shared {
    },
 }
 
+cc_prebuilt_library_shared {
+   name: "libnndemo",
+   vendor: true,
+   arch: {
+      arm: {
+         srcs: ["nnsdk/android/lib32/libnndemo.so"],
+      },
+      arm64: {
+         srcs: ["nnsdk/android/lib64/libnndemo.so"],
+      },
+   },
+   check_elf_files: false,
+   strip: {
+            none:true,
+   },
+}
+
 cc_library_headers {
     name: "libnnsdk_headers",
     vendor: true,
