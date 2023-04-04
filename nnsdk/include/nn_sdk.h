@@ -350,6 +350,7 @@ typedef struct {
     char*                hw_version;
     aml_hw_type_t        hw_type;
     aml_npu_hw_info_t    npu_hw_info;
+    unsigned int         platform_type;
 } aml_platform_info_t;
 
 typedef struct {
@@ -498,4 +499,5 @@ int  aml_read_chip_info(aml_platform_info_t* platform_info);
 #ifdef __cplusplus
 } //extern "C"
 #endif
+
 #endif // _NN_SDK_H
