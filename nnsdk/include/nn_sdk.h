@@ -82,7 +82,9 @@ typedef enum _nn_buffer_format_e
     /*! \brief A 16 bit unsigned integer type of buffer data */
     NN_BUFFER_FORMAT_UINT16     = 4,
     /*! \brief A 16 signed integer type of buffer data */
-    NN_BUFFER_FORMAT_INT16      = 5
+    NN_BUFFER_FORMAT_INT16      = 5,
+    /*! \brief A 32 signed integer type of buffer data */
+    NN_BUFFER_FORMAT_INT32      = 6
 } nn_buffer_format_e;
 
 typedef enum _nn_buffer_quantize_format_e
@@ -178,6 +180,14 @@ typedef enum {
     AML_OUTPUT_ORDER_NCHW         = 2,    //output format: nchw
 } aml_output_order_t;
 
+typedef  struct __aml_invoke_info_t
+{
+    int typeSize;
+    int invoke_type; // 1: invoke_no_wait, 2: waitwithid
+    int32_t timeout; //ms
+    int64_t invoke_id;
+} aml_invoke_info_t;
+
 typedef  struct __amlnn_module_out_data_t
 {
     int typeSize;
@@ -185,6 +195,7 @@ typedef  struct __amlnn_module_out_data_t
     aml_perf_mode_t perfMode;
     aml_output_format_t format;
     aml_output_order_t order;
+    aml_invoke_info_t invoke;
 } aml_output_config_t;
 
 typedef struct _nn_buffer_create_params_t
