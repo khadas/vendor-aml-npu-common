@@ -83,6 +83,40 @@ cc_prebuilt_library_shared {
    },
 }
 
+cc_prebuilt_library_shared {
+   name: "libGPUsdk",
+   vendor: true,
+   arch: {
+      arm: {
+         srcs: ["nnsdk/android/lib32/libGPUsdk.so"],
+      },
+      arm64: {
+         srcs: ["nnsdk/android/lib64/libGPUsdk.so"],
+      },
+   },
+   check_elf_files: false,
+   strip: {
+            none:true,
+   },
+}
+
+cc_prebuilt_library_shared {
+   name: "libXNNPACKsdk",
+   vendor: true,
+   arch: {
+      arm: {
+         srcs: ["nnsdk/android/lib32/libXNNPACKsdk.so"],
+      },
+      arm64: {
+         srcs: ["nnsdk/android/lib64/libXNNPACKsdk.so"],
+      },
+   },
+   check_elf_files: false,
+   strip: {
+            none:true,
+   },
+}
+
 cc_library_headers {
     name: "libnnsdk_headers",
     vendor: true,

@@ -304,6 +304,13 @@ typedef struct __aml_compiler_args_t
     int32_t compiler_only;
 } aml_compiler_args_t;
 
+typedef enum __aml_hw_flag_t
+{
+    AML_HW_NPU     = 1,
+    AML_HW_GPU     = 2,
+    AML_HW_CPU     = 3
+} aml_hw_flag_t;
+
 typedef struct __aml_nn_config
 {
     int typeSize;
@@ -315,6 +322,7 @@ typedef struct __aml_nn_config
     assign_user_address_t inOut;
     aml_forward_ctrl_t forward_ctrl;
     aml_compiler_args_t compiler_args;
+    aml_hw_flag_t hw_flag;
 } aml_config;
 
 typedef struct {
@@ -345,6 +353,8 @@ typedef enum {
     AML_HARDWARE_VSI_UNIFY           = 0,
     AML_HARDWARE_VIPLITE             = 1,
     AML_HARDWARE_ADLA                = 2,
+    AML_HARDWARE_GPU                 = 3,
+    AML_HARDWARE_CPU                 = 4,
     AML_HARDWARE_MAX                 = 100,
 } aml_hw_type_t;
 
@@ -368,6 +378,8 @@ typedef struct {
     int32_t memory_size;    // memory size used by the loaded model
     int32_t axi_sram_size;  // axi sram size required by the loaded model
     int32_t num_layers;
+    int64_t macc_count;
+    double  sum_macc; //Gops
 } aml_ctx_info_t;
 
 typedef struct {
@@ -375,6 +387,7 @@ typedef struct {
     int32_t axi_working_frequency;  // in MHz
     int32_t memory_size;            // memory size used by the device driver
     int32_t axi_sram_size;          // axi sram size allocated for the device
+    float tops;                     // TOPS
 } aml_dev_memory_info_t;
 
 typedef struct {
