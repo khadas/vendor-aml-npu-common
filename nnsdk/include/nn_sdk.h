@@ -11,19 +11,20 @@
 #define _NN_SDK_H
 
 #include <stdint.h>
+#include <stdbool.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 /////////////////////////some value define////////////////////////
-#define MAX_NAME_LEGTH              64
-#define INPUT_MAX_NUM               16
-#define OUTPUT_MAX_NUM              32
+#define MAX_NAME_LENGTH              64
+#define INPUT_MAX_NUM               64
+#define OUTPUT_MAX_NUM              64
 #define INPUT_CHANNEL               3
 #define MAX_DETECT_NUM              230
 #define SUPPORT_NET_NUM             60
-#define ADDRESS_MAX_NUM             16
+#define ADDRESS_MAX_NUM             64
 #define MAX_TENSOR_NUM_DIMS         6
 #define INPUT_META_NUM              1
 
@@ -84,7 +85,7 @@ typedef enum _nn_buffer_format_e
     /*! \brief A 16 signed integer type of buffer data */
     NN_BUFFER_FORMAT_INT16      = 5,
     /*! \brief A 32 signed integer type of buffer data */
-    NN_BUFFER_FORMAT_INT32      = 6
+    NN_BUFFER_FORMAT_INT32      = 8
 } nn_buffer_format_e;
 
 typedef enum _nn_buffer_quantize_format_e
@@ -218,15 +219,15 @@ typedef struct _nn_buffer_create_params_t
 } nn_buffer_params_t;
 
 typedef enum {
-    AML_INPUT_DEFAULT      = 0,    //channle format: caffe 2 1 0 ,others 0 1 2
-    AML_INPUT_MODEL_NHWC   = 1,    //channle format: 0 1 2
-    AML_INPUT_MODEL_NCHW   = 2,    //channle format: 2 1 0
+    AML_INPUT_DEFAULT      = 0,    //channel format: caffe 2 1 0 ,others 0 1 2
+    AML_INPUT_MODEL_NHWC   = 1,    //channel format: 0 1 2
+    AML_INPUT_MODEL_NCHW   = 2,    //channel format: 2 1 0
 } aml_input_format_t;
 
 typedef struct out_buf
 {
     unsigned int size;
-    char  name[MAX_NAME_LEGTH];     //output tensor name
+    char  name[MAX_NAME_LENGTH];     //output tensor name
     unsigned char *buf;
     nn_buffer_params_t *param;
     aml_output_format_t out_format;
@@ -239,6 +240,12 @@ typedef struct __nnout
     outBuf_t out[OUTPUT_MAX_NUM];
 } nn_output;
 
+typedef enum {
+    AML_INPUT_U8,
+    AML_INPUT_I8,
+    AML_INPUT_FP32,
+} aml_input_data_type_t;
+
 typedef struct
 {
     int valid;
@@ -247,6 +254,7 @@ typedef struct
     float mean[INPUT_CHANNEL];
     float scale;
     aml_input_format_t input_format;
+    aml_input_data_type_t input_data_type;
 }input_info;
 
 typedef struct __nn_input
@@ -298,10 +306,76 @@ typedef struct __aml_forward_ctrl_t
     int32_t                    timeout_ms;
 } aml_forward_ctrl_t;
 
+typedef enum __aml_model_type_t
+{
+    AML_MODEL_TYPE_ADLA_LOADABLE = 0,
+    AML_MODEL_TYPE_TENSORFLOW,
+    AML_MODEL_TYPE_TENSORFLOW_LITE
+} aml_model_type_t;
+
+typedef enum __aml_model_in_out_type_t
+{
+    AML_MODEL_IN_OUT_TYPE_MEMORY = 0,
+    AML_MODEL_IN_OUT_TYPE_FILE
+} aml_model_in_out_type_t;
+
+typedef enum __aml_compiler_optimization_mode_t
+{
+    AML_COMPILER_OPTIMIZATION_MODE_FAST = 0,
+    AML_COMPILER_OPTIMIZATION_MODE_PRECISE
+} aml_compiler_optimization_mode_t;
+
+typedef struct __aml_compiler_input_t
+{
+    aml_model_type_t model_type;
+    aml_model_in_out_type_t input_type;
+
+    const void* model_data;
+    size_t model_size;
+
+    const char* model_path;
+} aml_compiler_input_t;
+
+typedef struct __aml_compiler_config_t
+{
+    const char* hw_version;
+    int32_t axi_sram_size;
+    int32_t batch_multiplier;
+    aml_compiler_optimization_mode_t optimization_mode;
+} aml_compiler_config_t;
+
+typedef struct __aml_compiler_allocator_t
+{
+    uint8_t* (*allocate)(size_t size);
+    void (*deallocate)(uint8_t *p, size_t size);
+} aml_compiler_allocator_t;
+
+typedef struct __aml_compiler_metadata_t
+{
+    int32_t count;
+    const char** names;
+    const char** data;
+} aml_compiler_metadata_t;
+
+typedef struct __aml_compiler_debug_options_t
+{
+    bool dump_model_info;
+    bool disable_fusion;
+    bool disable_compression;
+    bool disable_memory_optimization;
+} aml_compiler_debug_options_t;
+
 typedef struct __aml_compiler_args_t
 {
-    int32_t batch_multiplier;
+    // int32_t batch_multiplier;
     int32_t compiler_only;
+    int32_t set_compiler_args_flag;
+    aml_compiler_input_t input;
+    aml_compiler_config_t config;
+    const aml_compiler_allocator_t* allocator;
+    const aml_compiler_metadata_t* metadata;
+    const aml_compiler_debug_options_t* debug_options;
+    const char* custom_option_path;
 } aml_compiler_args_t;
 
 typedef enum __aml_hw_flag_t
@@ -334,7 +408,7 @@ typedef struct {
     int fixed_point_pos;          /*for int8/int16 QUANTIZE_DYNAMIC_FIXED_POINT*/
     float TF_scale;               /*as tf define,scale*/
     int TF_zeropoint;             /*as tf define,zeropoint*/
-    char name[MAX_NAME_LEGTH];    /*not use,will used in future*/
+    char name[MAX_NAME_LENGTH];    /*not use,will used in future*/
 } info_t;
 
 typedef struct {
