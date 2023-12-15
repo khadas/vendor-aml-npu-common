@@ -18,7 +18,7 @@ extern "C" {
 #endif
 
 /////////////////////////some value define////////////////////////
-#define MAX_NAME_LENGTH              64
+#define MAX_NAME_LENGTH             64
 #define INPUT_MAX_NUM               64
 #define OUTPUT_MAX_NUM              64
 #define INPUT_CHANNEL               3
@@ -574,6 +574,7 @@ tensor_info*  aml_util_getOutputTensorInfo(const char* nbgdata); /*====get model
 
 int  aml_util_mallocBuffer(void* context, aml_memory_config_t* mem_config, aml_memory_data_t* mem_data);
 int  aml_util_freeBuffer(void* context, aml_memory_config_t* mem_config, aml_memory_data_t* mem_data);
+int  aml_util_flushBuffer(void* context, aml_memory_config_t* mem_config, aml_memory_data_t* mem_data);
 
 int  aml_util_swapExternalInputBuffer(void *context, aml_memory_config_t* mem_config, aml_memory_data_t* mem_data);
 int  aml_util_swapExternalOutputBuffer(void *context, aml_memory_config_t* mem_config, aml_memory_data_t* mem_data);
