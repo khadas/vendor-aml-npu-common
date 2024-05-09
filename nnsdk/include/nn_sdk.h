@@ -85,7 +85,9 @@ typedef enum _nn_buffer_format_e
     /*! \brief A 16 signed integer type of buffer data */
     NN_BUFFER_FORMAT_INT16      = 5,
     /*! \brief A 32 signed integer type of buffer data */
-    NN_BUFFER_FORMAT_INT32      = 8
+    NN_BUFFER_FORMAT_INT32      = 8,
+    /*! \brief A 64 signed integer type of buffer data */
+    NN_BUFFER_FORMAT_INT64      = 10
 } nn_buffer_format_e;
 
 typedef enum _nn_buffer_quantize_format_e
@@ -439,6 +441,18 @@ typedef struct {
 } aml_npu_hw_info_t;
 
 typedef struct {
+    char hw_version[10];
+    int i8_mac_cnt;
+    int max_clk;
+    int Gops;
+    _Bool kernel_vlc;
+    _Bool feature_vlc;
+    int cur_clk;
+    unsigned long sram_base;
+    int sram_size;
+} aml_hw_info_t;
+
+typedef struct {
     unsigned int         cpuinfo;
     char*                sdk_version;
     char*                ddk_version;
@@ -446,6 +460,7 @@ typedef struct {
     aml_hw_type_t        hw_type;
     aml_npu_hw_info_t    npu_hw_info;
     unsigned int         platform_type;
+    aml_hw_info_t        hw_info;
 } aml_platform_info_t;
 
 typedef struct {
@@ -498,6 +513,18 @@ typedef struct aml_work_frequency
     float                         *min_freq;
 } aml_work_frequency_t;
 
+typedef struct aml_clk_core
+{
+    int32_t                        set_clk_core_switch;
+    int32_t                        clk;
+} aml_clk_core_t;
+
+typedef struct aml_dpm_period
+{
+    int32_t                        set_dpm_period_switch;
+    int32_t                        dpm;
+} aml_dpm_period_t;
+
 typedef struct {
     unsigned int                   suspend_time;
     float                          freq;
@@ -506,6 +533,8 @@ typedef struct {
     aml_profiling_data_t           profiling_data;
     aml_work_frequency_t           frequency_data;
     aml_context_info_t             context_info;
+    aml_clk_core_t                 clk_core;
+    aml_dpm_period_t               dpm_period;
 } aml_profile_config_t;
 
 typedef enum {
